@@ -1,9 +1,10 @@
 from pydantic import BaseModel, annotated_types
 from enum import Enum
 from typing import Optional, Union
+import datetime
+import time
 
 from pydantic.fields import Field
-
 
 class ProductType(str, Enum):
     standard = "standard"
@@ -16,6 +17,7 @@ class ProductModel(BaseModel):
     name: str
     description: str
     price: float
+    created_at: Optional[datetime.datetime] = time.time()
 
 class ProductStandardModel(ProductModel):
     type: Optional[ProductType] = ProductType.standard
