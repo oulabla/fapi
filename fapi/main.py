@@ -1,5 +1,6 @@
 from time import process_time, time
 from fastapi import FastAPI, Depends, Request, Response
+from fastapi.security import OAuth2PasswordBearer, oauth2
 import uvicorn
 from enum import Enum
 from pydantic import BaseModel, Field
@@ -14,6 +15,8 @@ class UsefulService:
 
 app = FastAPI()
 
+oauth2_scheme = OAuth2PasswordBearer(tokenUrl="https://www.googleapis.com/oauth2/v4/token")
+
 app.middleware("http")
 async def add_process_time(request: Request, call_next):
     start_time = time()
@@ -25,15 +28,18 @@ async def add_process_time(request: Request, call_next):
 
 ################
 
+
+
 @app.get("/")
 async def root():
     return {"message": "Hello World"}
 
 
 @app.get("/api/items/{item_id}")
-async def read_item(item_id : int):
+async def read_item(item_id : int, token: str = Depends(oauth2_scheme)):
     return {
-        "item_id": item_id
+        "item_id": item_id,
+        "token": token
     }
 
 
